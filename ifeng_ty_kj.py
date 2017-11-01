@@ -23,7 +23,7 @@ def get_news_list(news_para):
         'Accept-Encoding': '',
         'Connection': 'keep-alive',
         'Content-Length': '0',
-        'Host': 'id.ifeng.com',
+        'Host': 'api.iclient.ifeng.com',
         'User-Agent': 'Dalvik/2.1.0(Linux;U;Android 5.1;iphone249 plus 1 Build/LMY47I)',
         'Accept-Language':'zh-CN,zh;q=0.8'
     })
@@ -32,8 +32,15 @@ def get_news_list(news_para):
     my_data['action'] = ''
     my_data['pullNum']='1'
     my_data['lastDoc'] = ',,,'
+    my_data['gv'] = '5.7'
+    my_data['av'] = '5.7'
+    my_data['screen'] = '720x1280'
+    my_data['nw'] = 'wifi'
+    my_data['province'] = '上海'
+    my_data['city'] = '上海'
+    my_data['proid'] = 'ifengnews'
     try:
-        r=my_s.get('http://api.3g.ifeng.com/ClientNews',params=my_data,timeout=10)
+        r=my_s.get('http://api.iclient.ifeng.com/ClientNews',params=my_data,timeout=10)
     except Exception as e:
         print(e)
     else:
@@ -141,9 +148,13 @@ def log_in(receive_cookie):
                             my_data['ext2'] = str(comment_ext2)
                             try:
                                 r = my_s.get(comment_url, params=my_data,timeout=10)
-                                res_txt=r.json()
-                                print('news_%d发布于:%s标题:%s\n状态:%s提示:%s回复:%s' % (len(used_url_list),
-                                item['updateTime'], item['title'], res_txt['code'],res_txt['message'] if 'message' in res_txt.keys()else '无',(str(reply_message_index)+tail_emoji)))
+                                if bool(r):
+                                    res_txt=r.json()
+                                    print('news_%d发布于:%s标题:%s\n状态:%s提示:%s回复:%s' % (len(used_url_list),
+                                    item['updateTime'], item['title'], res_txt['code'],res_txt['message'] if 'message' in res_txt.keys()else ' ',(str(reply_message_index)+tail_emoji)))
+                                else:
+                                    print('news_%d发布于:%s标题:%s\n状态:%s提示:%s回复:%s' % (len(used_url_list),item['updateTime'], item['title'], '失败',' ',(str(reply_message_index)+tail_emoji)))
+                                    break
                             except Exception as e:
                                 print(e)
                                 return
